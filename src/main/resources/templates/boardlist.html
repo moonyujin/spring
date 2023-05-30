@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<head>
+<meta charset="UTF-8">
+<title>게시글 리스트 페이지</title>
+</head>
+
+<style>
+
+	.layout {
+		width : 500px;
+		margin : 0 auto;
+		margin-top : 40px;
+	}
+	
+</style>
+<body>
+<form th:action="@{/board/list}" method="get">
+<select id="select_value" onchange="ChangeValue()">
+	<option name="test" value="id" >글번호</option>
+	<option name="test" value="title">제목</option>
+</select>
+	<script>
+		var value_str = document.getElementById('select_value');
+		var search_type = value_str.options[value_str.selectedIndex].value;
+		alert("test:" + value_str.options[value_str.selectedIndex].value);
+	</script>
+<script>
+	function ChangeValue() {
+		var value_str = document.getElementById('select_value');
+		alert("value:" + value_str.options[value_str.selectedIndex].value +
+				"text:" + value_str.options[value_str.selectedIndex].text);
+	}
+</script>
+<input type="text" name="searchKeyword">
+<button type="submit">검색</button>
+</form>
+	<div class="layout">
+		<table>
+			<thead>
+				<tr>
+					<th>글번호</th>
+					<th>제목</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="board : ${list}">
+					<td th:text="${board.id}">1</td>
+					<td>
+						<a th:text="${board.title}" th:href="@{/board/getpage(id=${board.id})}"></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+			<a th:if="${page !=nowPage}" th:href="@{/board/list(page = ${page - 1}, searchKeyword = ${param.searchKeyword}, searchType = ${search_type})}" th:text="${page}"></a>
+			<strong th:if="${page ==nowPage}" th:text="${page}" style="color : red"></strong>
+		</th:block>
+
+	</div>
+
+	<form action="/board/write" method="get">
+		<button>글 작성 버튼</button>
+	</form>
+
+</body>
+</html>
